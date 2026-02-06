@@ -1,9 +1,9 @@
 === Falcon - WordPress Optimizations & Tweaks ===
 Contributors: elightup, rilwis, truongwp, paracetamol27
 Tags: optimize, performance, speed, tweaks, admin
-Requires at least: 5.9
-Tested up to: 6.7.1
-Stable tag: 2.8.5
+Requires at least: 6.5
+Tested up to: 6.9
+Stable tag: 2.9.3
 Requires PHP: 7.4
 License: GPLv2 or later
 
@@ -15,25 +15,33 @@ A lightweight WordPress optimization and tweak plugin for a better performance
 
 ### FEATURES & MODULES
 
-Falcon offers a comprehensive list of 49 FREE modules (and growing) for you to tweak and optimize your WordPress websites. These options are divided into the following categories:
+Falcon offers a comprehensive list modules for you to tweak and optimize your WordPress websites. These options are divided into the following categories:
 
-### General
+#### [Disable components](https://wpfalcon.pro/features/disable-components/)
+
+**General components:**
 
 - [Disable Gutenberg](https://metabox.io/disable-gutenberg-without-using-plugins/) (the block editor)
 - Disable heartbeat
 - Disable embeds, e.g. prevent others from embedding your site and vise-versa
-- Disable comments
-- Remove website field from comment form
+- Disable comments & remove website field from comment form
 - Disable revisions
 - Disable self pings
 - Disable privacy tools
 - Disable cron
 - Disable auto updates
 - Block external requests
-- Search only posts
 - Disable replacing text with formatted entities like smart quotes, dashes, ellipses, etc.
 
-### Header cleanup
+**Media components:**
+
+- Remove jQuery Migrate
+- Disable emojis
+- Disable scaling down big images
+- Disable automatic image rotation based on EXIF data
+- Disable thumbnail generation
+
+#### [Header cleanup](https://wpfalcon.pro/features/header-cleanup/)
 
 - Remove feed links
 - Remove RSD link
@@ -43,21 +51,7 @@ Falcon offers a comprehensive list of 49 FREE modules (and growing) for you to t
 - Remove shortlink
 - Remove REST API link
 
-### Media
-
-- **Asynchronous load CSS** to avoid blocking load of CSS files
-- Remove query string for JavaScript and CSS files
-- Remove jQuery Migrate
-- Set scheme-less URLs for JavaScript and CSS files, e.g. remove `http:` and `https:` from URLs
-- Remove styles for recent comments widget
-- Cleanup nav menu item ID & classes
-- Disable emojis
-- Disable scaling down big images
-- Disable automatic image rotation based on EXIF data
-- Disable thumbnail generation
-- Enable maintenance mode
-
-### Email
+#### [Email](https://wpfalcon.pro/features/email/)
 
 - Remove admin email confirmation
 - Disable auto update email notification
@@ -66,7 +60,7 @@ Falcon offers a comprehensive list of 49 FREE modules (and growing) for you to t
 - [Change default WordPress from name and email](https://deluxeblogtips.com/change-wordpress-default-email/)
 - SMTP configuration
 
-### Admin
+#### [Admin cleanup](https://wpfalcon.pro/features/admin-cleanup/)
 
 - Show site icon on login page
 - Remove update nags
@@ -75,7 +69,7 @@ Falcon offers a comprehensive list of 49 FREE modules (and growing) for you to t
 - Remove WordPress logo in the admin bar
 - Remove application passwords
 
-### Security
+#### [Security](https://wpfalcon.pro/features/security/)
 
 - Disable REST API for unauthenticated requests
 - [Disable XML-RPC](https://deluxeblogtips.com/disable-xml-rpc-wordpress/)
@@ -84,14 +78,25 @@ Falcon offers a comprehensive list of 49 FREE modules (and growing) for you to t
 - Block AI bots from crawling/stealing your content, which also affect the performance
 - Force login to view the website
 
+#### [Cache](https://wpfalcon.pro/features/cache/)
+
+Falcon's cache feature creates static HTML files of your pages, serving them instantly to visitors without processing database queries, or loading WordPress, themes and all plugins on every request.
+
+#### [Tweaks](https://wpfalcon.pro/features/tweaks/)
+- Search only posts
+- Enable maintenance mode
+- Remove query string for JavaScript and CSS files
+- Set scheme-less URLs for JavaScript and CSS files, e.g. remove `http:` and `https:` from URLs
+- Remove styles for recent comments widget
+- Cleanup nav menu item ID & classes
+- **Asynchronous load CSS** to avoid blocking load of CSS files
+
 ### You might also like
 
 If you like this plugin, you might also like our other WordPress products:
 
 - [Meta Box](https://metabox.io) - A powerful WordPress plugin for creating custom post types and custom fields.
 - [Slim SEO](https://wpslimseo.com) - A fast, lightweight and full-featured SEO plugin for WordPress with minimal configuration.
-- [Slim SEO Schema](https://wpslimseo.com/products/slim-seo-schema/) - An advanced, powerful and flexible plugin to add schemas to WordPress.
-- [Slim SEO Link Manager](https://wpslimseo.com/products/slim-seo-link-manager/) - Build internal link easier in WordPress with real-time reports.
 - [GretaThemes](https://gretathemes.com) - Free and premium WordPress themes that clean, simple and just work.
 - [Auto Listings](https://wpautolistings.com) - A car sale and dealership plugin for WordPress.
 
@@ -104,6 +109,29 @@ Go to *Dashboard | Plugins | Add New* and search for **Falcon**. Then install an
 == Screenshots ==
 
 == Changelog ==
+
+= 2.9.3 - 2026-01-21 =
+
+- Improve check for not caching search result pages
+
+= 2.9.2 - 2025-12-23 =
+
+- Allow to upload WEBP images if enable restrict upload file types module
+- Fix PHP warning when deleting cache dir
+
+= 2.9.1 - 2025-12-19 =
+
+- Fix not creating cache dir after cleaning
+
+= 2.9.0 - 2025-12-19 =
+
+- **[Cache module](https://wpfalcon.pro/features/cache/) (HTML page cache):** A lightweight yet powerful caching module to improve page load times and reduce server load by caching full HTML pages. Just enable it in the **General** tab and you're good to go.
+  - Recommended for standard blogs and brochure-style websites.
+  - Not recommended for highly dynamic or eCommerce sites.
+- **Settings export & import:** Export your plugin settings to a file and import them on other sites to quickly reuse the same configuration.
+
+= 2.8.6 - 2025-10-20 =
+- Remove admin bar item when disable comments
 
 = 2.8.5 - 2025-02-06 =
 - Search posts only: exclude admin and rest API requests

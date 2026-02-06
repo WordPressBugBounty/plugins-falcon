@@ -5,6 +5,8 @@ class Settings {
 	public function __construct() {
 		add_action( 'admin_menu', [ $this, 'add_menu' ] );
 		add_action( 'wp_ajax_falcon_save_settings', [ $this, 'save' ] );
+		add_action( 'admin_init', [ $this, 'export' ] );
+		add_action( 'wp_ajax_falcon_import_settings', [ $this, 'import' ] );
 	}
 
 	public function add_menu() {
@@ -29,8 +31,7 @@ class Settings {
 
 				<nav class="e-tabs">
 					<?php
-					// phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-					$tabs = apply_filters( 'falcon/settings/tabs', [
+					$tabs = apply_filters( 'falcon_settings_tabs', [
 						'general'  => __( 'General', 'falcon' ),
 						'header'   => __( 'Header', 'falcon' ),
 						'media'    => __( 'Media', 'falcon' ),
@@ -57,13 +58,24 @@ class Settings {
 				<div class="e-wrapper">
 					<div class="e-content e-box">
 						<?php
-						// phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-						$tab_panes = apply_filters( 'falcon/settings/tab_panes', $this->get_tab_panes() );
+						$tab_panes = apply_filters( 'falcon_settings_tab_panes', $this->get_tab_panes() );
 						echo implode( '', $tab_panes ); // phpcs:ignore
 						?>
 					</div>
 
 					<div class="e-sidebar">
+						<div class="e-widget e-box">
+							<h2 class="e-widget_title"><?php esc_html_e( 'Import & export', 'falcon' ) ?></h2>
+							<p><?php esc_html_e( 'Export your current plugin settings and import them on another site to quickly apply the same configuration.', 'falcon' ) ?></p>
+							<div class="e-widget_actions">
+								<?php $url = wp_nonce_url( add_query_arg( 'action', 'falcon-export' ), 'export' ); ?>
+								<a href="<?= esc_url( $url ) ?>" class="button"><?php esc_html_e( 'Export', 'falcon' ) ?></a>
+								<label for="import" class="button">
+									<?php esc_html_e( 'Import', 'falcon' ) ?>
+									<input type="file" id="import" accept=".json">
+								</label>
+							</div>
+						</div>
 						<div class="e-widget e-box">
 							<h2 class="e-widget_title"><?php esc_html_e( 'Share & feedback', 'falcon' ) ?></h2>
 							<?php // Translators: %1$s - URL to the review page, %2$s - URL to the feedback page ?>
@@ -86,10 +98,12 @@ class Settings {
 		wp_enqueue_style( 'falcon', FALCON_URL . 'assets/settings.css', [], filemtime( FALCON_DIR . '/assets/settings.css' ) );
 		wp_enqueue_script( 'falcon', FALCON_URL . 'assets/settings.js', [], filemtime( FALCON_DIR . '/assets/settings.js' ), true );
 		wp_localize_script( 'falcon', 'Falcon', [
-			'nonce'       => wp_create_nonce( 'save' ),
-			'nonce_email' => wp_create_nonce( 'send-email' ),
-			'saving'      => __( 'Saving...', 'falcon' ),
-			'save'        => __( 'Save Changes', 'falcon' ),
+			'nonce'        => wp_create_nonce( 'save' ),
+			'nonce_email'  => wp_create_nonce( 'send-email' ),
+			'nonce_cache'  => wp_create_nonce( 'clear-cache' ),
+			'nonce_import' => wp_create_nonce( 'import' ),
+			'saving'       => __( 'Saving...', 'falcon' ),
+			'save'         => __( 'Save Changes', 'falcon' ),
 		] );
 	}
 
@@ -113,25 +127,21 @@ class Settings {
 		ob_start();
 		printf( '<div class="e-tabPane" data-tab="%s">', esc_attr( $name ) );
 		include FALCON_DIR . "/views/settings/tabs/$name.php";
-		// phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-		do_action( "falcon/settings/tabs/$name", $this );
+		do_action( "falcon_settings_tab_$name", $this );
 		echo '</div>';
 		return ob_get_clean();
 	}
 
-	public function save() {
+	public function save(): void {
 		check_ajax_referer( 'save' );
 
 		// phpcs:ignore
 		$data = ! empty( $_POST['falcon'] ) ? wp_unslash( $_POST['falcon'] ) : [];
-
-		$data['features']      = isset( $data['features'] ) && is_array( $data['features'] ) ? array_map( 'sanitize_text_field', $data['features'] ) : [];
-		$data['lazy_load_css'] = isset( $data['lazy_load_css'] ) ? sanitize_textarea_field( $data['lazy_load_css'] ) : '';
-		$data['smtp']          = isset( $data['smtp'] ) && is_array( $data['smtp'] ) ? array_map( 'sanitize_text_field', $data['smtp'] ) : [];
-		$data['default_email'] = isset( $data['default_email'] ) && is_array( $data['default_email'] ) ? array_map( 'sanitize_text_field', $data['default_email'] ) : [];
-		$data                  = array_filter( $data );
+		$data = $this->sanitize_data( $data );
 
 		update_option( 'falcon', $data );
+
+		do_action( 'falcon_settings_save', $data );
 
 		wp_send_json_success( __( 'Settings updated.', 'falcon' ) );
 	}
@@ -150,6 +160,7 @@ class Settings {
 			'maintenance_mode',
 			'force_login',
 			'smtp',
+			'cache',
 		];
 
 		return null === $data ? ! in_array( $name, $default_disabled, true ) : in_array( $name, $data['features'] ?? [], true );
@@ -168,5 +179,62 @@ class Settings {
 			</div>
 		</div>
 		<?php
+	}
+
+	public function export(): void {
+		if ( ! isset( $_GET['action'] ) || 'falcon-export' !== $_GET['action'] ) {
+			return;
+		}
+
+		check_ajax_referer( 'export' );
+
+		$data = get_option( 'falcon', [] );
+		$data = wp_json_encode( $data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+
+		header( 'Content-Type: application/octet-stream' );
+		header( 'Content-Disposition: attachment; filename=falcon-settings-' . gmdate( 'Y-m-d' ) . '.json' );
+		header( 'Expires: 0' );
+		header( 'Cache-Control: must-revalidate' );
+		header( 'Pragma: public' );
+
+		echo $data; // phpcs:ignore
+		exit;
+	}
+
+	public function import(): void {
+		check_ajax_referer( 'import' );
+
+		// phpcs:ignore
+		if ( empty( $_FILES['file'] ) || $_FILES['file']['error'] !== UPLOAD_ERR_OK ) {
+			wp_send_json_error( __( 'Error uploading file.', 'falcon' ) );
+		}
+
+		// phpcs:ignore
+		$file = $_FILES['file'];
+		$file_content = file_get_contents( $file['tmp_name'] ); // phpcs:ignore
+
+		if ( false === $file_content ) {
+			wp_send_json_error( __( 'Error reading file.', 'falcon' ) );
+		}
+
+		$data = json_decode( $file_content, true );
+		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			wp_send_json_error( __( 'Invalid JSON file.', 'falcon' ) );
+		}
+
+		$data = $this->sanitize_data( $data );
+		update_option( 'falcon', $data );
+
+		do_action( 'falcon_settings_save', $data );
+
+		wp_send_json_success( __( 'Settings imported successfully.', 'falcon' ) );
+	}
+
+	private function sanitize_data( array $data ): array {
+		$data['features']      = isset( $data['features'] ) && is_array( $data['features'] ) ? array_map( 'sanitize_text_field', $data['features'] ) : [];
+		$data['lazy_load_css'] = isset( $data['lazy_load_css'] ) ? sanitize_textarea_field( $data['lazy_load_css'] ) : '';
+		$data['smtp']          = isset( $data['smtp'] ) && is_array( $data['smtp'] ) ? array_map( 'sanitize_text_field', $data['smtp'] ) : [];
+		$data['default_email'] = isset( $data['default_email'] ) && is_array( $data['default_email'] ) ? array_map( 'sanitize_text_field', $data['default_email'] ) : [];
+		return array_filter( $data );
 	}
 }

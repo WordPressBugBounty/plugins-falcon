@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Falcon
- * Plugin URI:  https://elightup.com
+ * Plugin URI:  https://wpfalcon.pro
  * Description: WordPress optimizations & tweaks
- * Version:     2.8.5
+ * Version:     2.9.3
  * Author:      eLightUp
  * Author URI:  https://elightup.com
  * License:     GPL2+
@@ -39,6 +39,7 @@ new General;
 new Admin;
 new Security;
 new Email;
+new Components\Cache\Manager;
 
 if ( is_admin() ) {
 	new Core;
