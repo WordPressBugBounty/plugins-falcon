@@ -3,7 +3,7 @@ Contributors: elightup, rilwis, truongwp, paracetamol27
 Tags: optimize, performance, speed, tweaks, admin
 Requires at least: 6.5
 Tested up to: 6.9.4
-Stable tag: 2.10.0
+Stable tag: 2.10.1
 Requires PHP: 7.4
 License: GPLv2 or later
 
@@ -107,9 +107,18 @@ Go to *Dashboard | Plugins | Add New* and search for **Falcon**. Then install an
 
 == Frequently Asked Questions ==
 
+= Where do I report security bugs found in this plugin? =
+
+Please report security bugs found in the source code of the Falcon – WordPress Optimizations & Tweaks plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/9e5fc06c-9bf1-4893-92b9-2cac4d0f24f0). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+
 == Screenshots ==
 
 == Changelog ==
+
+= 2.10.1 - 2026-05-12 =
+
+- Fix serving the same cache for URL with and without query string
+- Clear cache only when a comment is approve
 
 = 2.10.0 - 2026-04-18 =
 
