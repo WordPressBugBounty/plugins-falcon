@@ -1,9 +1,9 @@
-=== Falcon - WordPress Optimizations & Tweaks ===
+=== Falcon - Cache, Performance, Security, Cleanup, and Tweaks ===
 Contributors: elightup, rilwis, truongwp, paracetamol27
 Tags: optimize, performance, speed, tweaks, admin
 Requires at least: 6.7
-Tested up to: 7.0.1
-Stable tag: 2.11.0
+Tested up to: 7.0
+Stable tag: 2.11.1
 Requires PHP: 7.4
 License: GPLv2 or later
 
@@ -143,6 +143,12 @@ Please report security bugs found in the source code of the Falcon – WordPress
 == Screenshots ==
 
 == Changelog ==
+
+### 2.11.1 - 2026-08-10
+
+- Stop direct access to PHP files.
+- Replace short echo tags with PHP echo.
+- Add option to keep latest N revisions when cleaning database.
 
 = 2.11.0 - 2026-07-12 =
 

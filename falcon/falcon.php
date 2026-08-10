@@ -3,12 +3,11 @@
  * Plugin Name: Falcon
  * Plugin URI:  https://wpfalcon.pro
  * Description: WordPress optimizations & tweaks
- * Version:     2.11.0
+ * Version:     2.11.1
  * Author:      eLightUp
  * Author URI:  https://elightup.com
  * License:     GPL2+
  * Text Domain: falcon
- * Domain Path: /languages/
  *
  * Copyright (C) 2010-2025 Tran Ngoc Tuan Anh. All rights reserved.
  *
@@ -27,6 +26,8 @@
  */
 
 namespace Falcon;
+
+defined( 'ABSPATH' ) || die;
 
 define( 'FALCON_URL', plugin_dir_url( __FILE__ ) );
 define( 'FALCON_DIR', __DIR__ );
