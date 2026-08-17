@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'elightup/falcon',
-        'pretty_version' => '2.11.1',
-        'version' => '2.11.1.0',
-        'reference' => '0ac7ad381b950230b05ab45c6f787b8ec6d65ca3',
+        'pretty_version' => '2.11.2',
+        'version' => '2.11.2.0',
+        'reference' => '938f4036d0162bbbb39303182141f013761a3cc2',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'elightup/falcon' => array(
-            'pretty_version' => '2.11.1',
-            'version' => '2.11.1.0',
-            'reference' => '0ac7ad381b950230b05ab45c6f787b8ec6d65ca3',
+            'pretty_version' => '2.11.2',
+            'version' => '2.11.2.0',
+            'reference' => '938f4036d0162bbbb39303182141f013761a3cc2',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
